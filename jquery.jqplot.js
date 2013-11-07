@@ -3103,8 +3103,7 @@
             var id1 = 0, id2 = 0;
             // var series1 = this.series[id1];
             // var series2 = this.series[id2];
-            console.log(series[id1]);
-            
+
             function fill(id1, id2){
                 var series1 = series[id1];
                 var series2 = series[id2];
@@ -3121,22 +3120,34 @@
                 
                 var baseSeries = fb.baseSeries !== null ? fb.baseSeries : id1;
                 var sr = series[baseSeries].renderer.shapeRenderer;
-                var gradient = series1.shadowCanvas._ctx.createLinearGradient(0,0,0,200);
-                
+                var gradient = series1.shadowCanvas._ctx.createLinearGradient(0,0,0,300);
+                var patternImage = document.getElementById('pattern');
+                var pattern = series1.shadowCanvas._ctx.createPattern(patternImage, "repeat");
+
                 if(id1 == 4){
-                    gradient.addColorStop(0, 'rgba(255, 228, 217, 0.5)');
-                    gradient.addColorStop(1, 'rgba(255, 255, 255, 0.5)');
+                    gradient.addColorStop(0, 'rgba(255, 228, 217, 0.6)');
+                    gradient.addColorStop(1, 'rgba(255, 255, 255, 0.6)');
+                    
                 } else {
                     gradient.addColorStop(0, 'rgba(0, 153, 204, 0.2)');
                     gradient.addColorStop(1, 'rgba(255, 255, 255, 0.2)');
                 }
+
                 var opts =
                 {
                     fillStyle : gradient,
                     fill : true,
                     closePath : true
                 };
+                var opts2 = 
+                {
+                    fillStyle : pattern,
+                    fill : true,
+                    closePath : true
+                };
+
                 sr.draw(series1.shadowCanvas._ctx, gd, opts)
+                sr.draw(series1.shadowCanvas._ctx, gd, opts2)                
              }
 
 
