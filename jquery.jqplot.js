@@ -1539,6 +1539,14 @@
         // prop: gridLineWidth
         // width of the grid lines.
         this.gridLineWidth = 1.0;
+        
+        // custom properties
+        // patterns accept any option that is supported by $.jqplot.LinePattern
+        this.gridLinePattern = null;
+        this.gridLineBottomColor = null;
+        this.gridLineBottomWidth = null;
+        this.gridLineBottomPattern = null;
+        
         // prop: background
         // css spec for the background color.
         this.background = '#fffdf6';
@@ -4358,7 +4366,30 @@
                             case 'yaxis':
                                 // draw the grid line
                                 if (t.showGridline && this.drawGridlines && ((!t.isMinorTick && axis.drawMajorGridlines) || (t.isMinorTick && axis.drawMinorGridlines)) ) {
-                                    drawLine(this._right, pos, this._left, pos);
+                                    var options = {
+                                        pattern: this.gridLinePattern
+                                    };
+                                    
+                                    if (1 === j) { // bottom line
+                                        if (this.gridLineBottomColor) {
+                                            ctx.strokeStyle = this.gridLineBottomColor;
+                                        }
+                                        
+                                        if (this.gridLineBottomWidth) {
+                                            ctx.lineWidth = this.gridLineBottomWidth;
+                                        }
+                                        
+                                        if (false === this.gridLineBottomPattern) {
+                                            delete options.pattern;
+                                        } else if (null !== this.gridLineBottomPattern) {
+                                            options.pattern = this.gridLineBottomPattern;
+                                        }
+                                    } else { // other lines
+                                        ctx.lineWidth = this.gridLineWidth;
+                                        ctx.strokeStyle = this.gridLineColor;
+                                    }
+                                    
+                                    drawLine(this._right, pos, this._left, pos, options);
                                 }
                                 // draw the mark
                                 if (t.showMark && t.mark && ((!t.isMinorTick && axis.drawMajorTickMarks) || (t.isMinorTick && axis.drawMinorTickMarks)) ) {
@@ -4535,11 +4566,21 @@
         function drawLine(bx, by, ex, ey, opts) {
             ctx.save();
             opts = opts || {};
+            
             if (opts.lineWidth == null || opts.lineWidth != 0){
                 $.extend(true, ctx, opts);
-                ctx.beginPath();
-                ctx.moveTo(bx, by);
-                ctx.lineTo(ex, ey);
+                
+                if (opts.pattern) {
+                    var pattern = $.jqplot.LinePattern(ctx, opts.pattern);
+                    pattern.beginPath();
+                    pattern.moveTo(bx, by);
+                    pattern.lineTo(ex, ey);
+                } else {
+                    ctx.beginPath();
+                    ctx.moveTo(bx, by);
+                    ctx.lineTo(ex, ey);
+                }
+                
                 ctx.stroke();
                 ctx.restore();
             }
@@ -4660,11 +4701,11 @@
 
     $.jqplot.LinePattern = function (ctx, pattern) {
 
-		var defaultLinePatterns = {
-			dotted: [ dotlen, $.jqplot.config.dotGapLength ],
-			dashed: [ $.jqplot.config.dashLength, $.jqplot.config.gapLength ],
-			solid: null
-		};   	
+        var defaultLinePatterns = {
+            dotted: [ dotlen, $.jqplot.config.dotGapLength ],
+            dashed: [ $.jqplot.config.dashLength, $.jqplot.config.gapLength ],
+            solid: null
+        };      
 
         if (typeof pattern === 'string') {
             if (pattern[0] === '.' || pattern[0] === '-') {
