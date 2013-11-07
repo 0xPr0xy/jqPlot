@@ -1543,9 +1543,6 @@
         // custom properties
         // patterns accept any option that is supported by $.jqplot.LinePattern
         this.gridLinePattern = null;
-        this.gridLineBottomColor = null;
-        this.gridLineBottomWidth = null;
-        this.gridLineBottomPattern = null;
         
         // prop: background
         // css spec for the background color.
@@ -4450,25 +4447,9 @@
                                         pattern: this.gridLinePattern
                                     };
                                     
-                                    if (1 === j) { // bottom line
-                                        if (this.gridLineBottomColor) {
-                                            ctx.strokeStyle = this.gridLineBottomColor;
-                                        }
-                                        
-                                        if (this.gridLineBottomWidth) {
-                                            ctx.lineWidth = this.gridLineBottomWidth;
-                                        }
-                                        
-                                        if (false === this.gridLineBottomPattern) {
-                                            delete options.pattern;
-                                        } else if (null !== this.gridLineBottomPattern) {
-                                            options.pattern = this.gridLineBottomPattern;
-                                        }
-                                    } else { // other lines
-                                        ctx.lineWidth = this.gridLineWidth;
-                                        ctx.strokeStyle = this.gridLineColor;
+                                    if (1 === j) { 
+                                        delete options.pattern;
                                     }
-                                    
                                     drawLine(this._right, pos, this._left, pos, options);
                                 }
                                 // draw the mark
